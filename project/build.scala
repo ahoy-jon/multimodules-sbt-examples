@@ -7,7 +7,7 @@ object WebLibBuild extends Build {
   
   override lazy val settings = super.settings ++ buildSettings
   def buildSettings = Seq(
-    scalaVersion := "2.9.0" //,
+    //scalaVersion := "2.9.0" //,
     //scalaSource in Compile <<= baseDirectory {(base: File) => base / "src"}
   )
   
@@ -16,19 +16,16 @@ object WebLibBuild extends Build {
     base = file(".")) aggregate (lib, web)
 
   lazy val web =  Project(id = "web",
-    base = file("web")) dependsOn(lib)
+    base = file("web")
+	) dependsOn(lib) settings (webSettings :_*)
 
+	
   lazy val lib = Project(id ="lib", 
-    base = file("lib"))
+    base = file("lib")) 
     
     
 
-  //lazy val publishAll = TaskKey[Unit]("publish-all")
-  def rootSettings = Seq(
-    run <<= inAll(seq(lib.settings), run.task)
-  )
-    
-  
+ 
 
 
   object Dependency {
@@ -36,6 +33,14 @@ object WebLibBuild extends Build {
     val scalavaadin = "org.scalavaadin" %% "core" % "0.0.3"
 
   }
+  
+  
+   //lazy val publishAll = TaskKey[Unit]("publish-all")
+  //def rootSettings = Seq(
+  //  run <<= inAll(seq(lib.settings), run.task)
+  //)
+    
+  
   
   def inAll(projects: => Seq[ProjectReference], key: ScopedSetting[Task[Unit]]): Project.Initialize[Task[Unit]] =
   inAllProjects(projects, key) { deps => nop dependsOn( deps : _*) }
